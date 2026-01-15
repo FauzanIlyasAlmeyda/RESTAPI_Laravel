@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\produk;
+use Error;
 use Illuminate\Http\Request;
 use Symfony\Contracts\Service\Attribute\Required;
 
@@ -70,9 +71,37 @@ class produkController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Request $request, string $id)
     {
-        //
+        $data = produk::find($id);
+        if (!$data) {
+            return response()->json(
+            [
+                'message'=>'tidak ditemukan'
+            ],
+            404
+        );}
+
+         $request->validate(
+            [
+                'nama' => 'required',
+                'produk' =>'required',
+                'gambar' => 'required'
+            ]);
+
+        $data->update([
+            'nama' => $request->nama,
+                'produk' => $request->produk,
+                'gambar' => $request->gambar,
+        ]);
+
+         return response()->json(
+            [
+                'message'=>'berhasil'
+            ],
+            200
+        );
+        
     }
 
     /**
