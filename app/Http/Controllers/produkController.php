@@ -13,22 +13,17 @@ class produkController extends Controller
      */
     public function index(Request $request)
     {
-      $product = produk::all();
-      return response()->json([
-        'status' => 'success',
-        'data' => $product
-      ], 200);
-      
-
+        $product = produk::all();
+        return response()->json([
+            'status' => 'success',
+            'data' => $product
+        ], 200);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request)
-    {
-        
-    }
+    public function create(Request $request) {}
 
     /**
      * Store a newly created resource in storage.
@@ -41,13 +36,14 @@ class produkController extends Controller
             'gambar' => 'Required',
         ]);
 
-        $product = produk::create($data
+        $product = produk::create(
+            $data
         );
         return response()->json([
-        'status' => 'success',
-        'message' => 'berhasil dibuat'
+            'status' => 'success',
+            'message' => 'berhasil dibuat'
 
-        ],200);
+        ], 200);
     }
 
     /**
@@ -55,7 +51,20 @@ class produkController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $data = produk::find($id);
+        if (!$data) {
+            return response()->json([
+                'status' => 'gagal',
+                'message' => 'tidak ditemukan'
+
+            ], 404);
+        }
+        return response()->json(
+            [
+                'data' => $data
+            ],
+            200
+        );
     }
 
     /**
@@ -79,6 +88,18 @@ class produkController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $data = produk::find($id);
+        if (!$data) {
+            return response()->json([
+                'status' => 'gagal',
+                'message' => 'data tidak ada'
+            ]);
+        }
+
+        $data->delete();
+        return response()->json([
+                'status' => 'berhasil',
+                'message' => 'berhasil dihapus'
+            ]);
     }
 }

@@ -9,4 +9,6 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/test_api', [produkController::class , 'index']);
+Route::get('/find_api/{id}', [produkController::class , 'show']);
+Route::delete('/delete_api/{id}', [produkController::class , 'destroy']);
 Route::post('/create_api', [produkController::class , 'store']);
