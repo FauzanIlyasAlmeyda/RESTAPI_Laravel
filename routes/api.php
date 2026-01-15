@@ -10,5 +10,7 @@ Route::get('/user', function (Request $request) {
 
 Route::get('/test_api', [produkController::class , 'index']);
 Route::get('/find_api/{id}', [produkController::class , 'show']);
+Route::put('/update_api/{id}', [produkController::class ,'update']);
 Route::delete('/delete_api/{id}', [produkController::class , 'destroy']);
 Route::post('/create_api', [produkController::class , 'store']);
+

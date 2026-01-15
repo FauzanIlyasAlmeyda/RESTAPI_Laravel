@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\produk;
-use Error;
+
 use Illuminate\Http\Request;
-use Symfony\Contracts\Service\Attribute\Required;
+use Illuminate\Support\Facades\Validator as FacadesValidator;
+
 
 class produkController extends Controller
 {
@@ -31,14 +32,24 @@ class produkController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'nama' => 'Required|string',
-            'harga' => 'Required',
-            'gambar' => 'Required',
+         $validator =  FacadesValidator::make($request->all(), [
+            'nama' => 'required',
+            'harga' => 'required',
+            'gambar' => 'required'
         ]);
 
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors()
+            ]);
+        }
+
         $product = produk::create(
-            $data
+            ['nama'=> $request->nama,
+            'harga'=> $request->harga,
+            'gambar'=> $request->gambar]
+
         );
         return response()->json([
             'status' => 'success',
@@ -71,45 +82,49 @@ class produkController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Request $request, string $id)
-    {
-        $data = produk::find($id);
-        if (!$data) {
-            return response()->json(
-            [
-                'message'=>'tidak ditemukan'
-            ],
-            404
-        );}
-
-         $request->validate(
-            [
-                'nama' => 'required',
-                'produk' =>'required',
-                'gambar' => 'required'
-            ]);
-
-        $data->update([
-            'nama' => $request->nama,
-                'produk' => $request->produk,
-                'gambar' => $request->gambar,
-        ]);
-
-         return response()->json(
-            [
-                'message'=>'berhasil'
-            ],
-            200
-        );
-        
-    }
+    public function edit(string $id) {}
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
-        //
+        $data = produk::find($id);
+        if (!$data) {
+            return response()->json(
+                [
+                    'message' => 'tidak ditemukan'
+                ],
+                404
+            );
+        }
+       
+
+        $validator =  FacadesValidator::make($request->all(), [
+            'nama' => 'required',
+            'harga' => 'required',
+            'gambar' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors()
+            ]);
+        }
+
+        $data->update([
+            'nama' => $request->nama,
+            'harga' => $request->harga,
+            'gambar' => $request->gambar,
+        ]);
+
+        return response()->json(
+            [
+                'message' => 'berhasil'
+            ],
+            200
+        );
     }
 
     /**
@@ -127,8 +142,8 @@ class produkController extends Controller
 
         $data->delete();
         return response()->json([
-                'status' => 'berhasil',
-                'message' => 'berhasil dihapus'
-            ]);
+            'status' => 'berhasil',
+            'message' => 'berhasil dihapus'
+        ]);
     }
 }
